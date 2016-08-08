@@ -1,0 +1,143 @@
+extends layout
+
+block content
+    h1= title
+    p Welcome to our test
+
+    // Wrapper
+    #wrapper
+
+        #bookInfo
+            h2 Book Info
+            p
+                strong Title:
+                |  <span id='bookInfoTitle'></span>
+                br
+                strong Author:
+                |  <span id='bookInfoAuthor'></span>
+                br
+                strong Publisher:
+                |  <span id='bookInfoPublisher'></span>
+                br
+                strong Year:
+                |  <span id='bookInfoYear'></span>
+                br
+                strong Circulation:
+                |  <span id='bookInfoCirculation'></span>
+                br
+                strong ImageURL:
+                |  <span id='bookInfoImageURL'></span>
+                br
+                strong Description:
+                |  <span id='bookInfoDescription'></span>
+                br
+                strong Rating:
+                |  <span id='bookInfoRating'></span>
+        
+        // USER LIST
+        h2 Book List
+        #bookList
+            table
+                thead
+                    th id
+                    th Title
+                    th Author
+                    th Publisher
+                    th Year
+                    th Circulation
+                    th ImageURL
+                    th Rating
+                    th Delete?
+                tbody
+        // /USER LIST
+        
+        #addBook
+            fieldset
+                input#inputBookTitle(type='text', placeholder='Title')
+                input#inputBookAuthor(type='text', placeholder='Author')
+                br
+                input#inputBookPublisher(type='text', placeholder='Publisher')
+                input#inputBookYear(type='text', placeholder='Year')
+                br
+                input#inputBookCirculation(type='text', placeholder='Circulation')
+                input#inputBookImageURL(type='text', placeholder='ImageURL')
+                br
+                input#inputBookDescription(type='text', placeholder='Description')
+                input#inputBookRating(type='text', placeholder='Rating')
+                br
+                button#btnAddBook Add Book
+
+    // /WRAPPER
+    #wrapper
+
+        #magazineInfo
+            h2 Magazine Info
+            p
+                strong Title:
+                |  <span id='magazineInfoTitle'></span>
+                br
+                strong Publisher:
+                |  <span id='magazineInfoPublisher'></span>
+                br
+                strong Edition:
+                |  <span id='magazineInfoEdition'></span>
+                br
+                strong Circulation:
+                |  <span id='magazineInfoCirculation'></span>
+                br
+                strong ImageURL:
+                |  <span id='magazineInfoImageURL'></span>
+                br
+                strong Description:
+                |  <span id='magazineInfoDescription'></span>
+                br
+                strong Rating:
+                |  <span id='magazineInfoRating'></span>
+        
+        // USER LIST
+        h2 Magazine List
+        #magazineList
+            table
+                thead
+                    th id
+                    th Title
+                    th Publisher
+                    th Edition
+                    th Circulation
+                    th ImageURL
+                    th Rating
+                    th Delete?
+                tbody
+        // /USER LIST
+        #addMagazine
+            fieldset
+                input#inputMagazineTitle(type='text', placeholder='Title')
+                br
+                input#inputMagazinePublisher(type='text', placeholder='Publisher')
+                input#inputMagazineEdition(type='text', placeholder='Edition')
+                br
+                input#inputMagazineCirculation(type='text', placeholder='Circulation')
+                input#inputMagazineImageURL(type='text', placeholder='ImageURL')
+                br
+                input#inputMagazineDescription(type='text', placeholder='Description')
+                input#inputMagazineRating(type='text', placeholder='Rating')
+                br
+                button#btnAddMagazine Add Magazine
+                
+            #wrapper
+            
+        h2 Genre List
+        #genreList
+            table
+                thead
+                    th id
+                    th Title
+                    th Delete?
+                tbody
+            
+        #addToGenre
+            fieldset
+                input#inputBookId(type='text', placeholder='BookId')
+                input#inputGenreId(type='text', placeholder='GenreId')
+                br
+                button#btnAddToGenre Add to Genre
