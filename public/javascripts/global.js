@@ -121,8 +121,8 @@ function addToGenre(event) {
     
     // Check and make sure errorCount's still at zero
     if(errorCount === 0) {
-        idgenre = $('#addToGenre fieldset input#inputBookId').val();
-        idbook = $('#addToGenre fieldset input#inputGenreId').val();
+        idgenre = $('#addToGenre fieldset input#inputGenreId').val();
+        idbook = $('#addToGenre fieldset input#inputBookId').val();
         
         $.ajax({
             type: 'PUT',

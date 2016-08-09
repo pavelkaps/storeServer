@@ -52,7 +52,6 @@ router.get('/genrelist', function(req, res) {
 /*
  * Add book_id to genrelist.
  */
-
 router.put('/addbooktogenre/:id', function(req, res) {
     var db = req.db;
     var collection = db.get('genrelist');
