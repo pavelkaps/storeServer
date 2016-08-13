@@ -134,10 +134,37 @@ block content
                     th Title
                     th Delete?
                 tbody
-            
-        #addToGenre
+        #addGenre
             fieldset
-                input#inputBookId(type='text', placeholder='BookId')
-                input#inputGenreId(type='text', placeholder='GenreId')
+                input#inputGenreTitle(type='text', placeholder='Title')
                 br
-                button#btnAddToGenre Add to Genre
+                button#btnAddGenre Add Genre
+        h4 Add to Genre List     
+        #addBookToGenre
+            fieldset
+                input#inputGenreBookId(type='text', placeholder='BookId')
+                input#inputGenreGenreId(type='text', placeholder='GenreId')
+                br
+                button#btnAddBookToGenre Add Book to Genre
+                
+        h2 Type List
+        #typeList
+            table
+                thead
+                    th id
+                    th Title
+                    th Delete?
+                tbody
+
+        #addType
+            fieldset
+                input#inputTypeTitle(type='text', placeholder='Title')
+                br
+                button#btnAddType Add Type
+        h4 Add to Type List     
+        #addMagazineToType
+            fieldset
+                input#inputTypeBookId(type='text', placeholder='BookId')
+                input#inputTypeTypeId(type='text', placeholder='TypeId')
+                br
+                button#btnAddMagazineToType Add Magazine to Type

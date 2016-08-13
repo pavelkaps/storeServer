@@ -1,6 +1,7 @@
 var bookListData = [];
 var magazineListData = [];
 var genreListData = [];
+var typeListData = [];
 
 // DOM Ready =============================================================
 $(document).ready(function() {
@@ -9,6 +10,7 @@ $(document).ready(function() {
     populateTable1();
     populateTable2();
     populateTable3();
+    populateTable4();
 
 });
 
@@ -21,7 +23,7 @@ function populateTable1() {
     var tableContent = '';
 
     // jQuery AJAX call for JSON
-    $.getJSON( '/users/booklist', function( data ) {
+    $.getJSON( '/store/booklist', function( data ) {
         bookListData = data;
         // For each item in our JSON, add a table row and cells to the content string
         $.each(data, function(){
@@ -55,7 +57,7 @@ function populateTable2() {
     // Empty content string
     var tableContent = '';
     
-    $.getJSON( '/users/magazinelist', function( data ) {
+    $.getJSON( '/store/magazinelist', function( data ) {
         magazineListData = data;
         // For each item in our JSON, add a table row and cells to the content string
         $.each(data, function(){
@@ -87,73 +89,49 @@ function populateTable3() {
     // Empty content string
     var tableContent = '';
     
-    $.getJSON( '/users/genrelist', function( data ) {
+    $.getJSON( '/store/genrelist', function( data ) {
         genreListData = data;
         // For each item in our JSON, add a table row and cells to the content string
         $.each(data, function(){
             tableContent += '<tr>';
             tableContent += '<td>' + this._id + '</td>';
             tableContent += '<td>' + this.title + '</td>';
-            tableContent += '<td><a href="#" class="linkdeletemagazine" rel="' + this._id + '">delete</a></td>';
+            tableContent += '<td><a href="#" class="linkdeletegenre" rel="' + this._id + '">delete</a></td>';
             tableContent += '</tr>';
         });
 
         // Inject the whole content string into our existing HTML table
     $('#genreList table tbody').html(tableContent);
-        //Book link click
-   
-    $('#btnAddToGenre').on('click', addToGenre);
+    $('#btnAddGenre').on('click', addGenre);
          // Delete Book link click
-    //$('#magazineList table tbody').on('click', 'td a.linkdeletemagazine', deleteMagazine);
+    $('#genreList table tbody').on('click', 'td a.linkdeletegenre', deleteGenre);
     }); 
 };
 
-function addToGenre(event) {
-    event.preventDefault();
+function populateTable4() {
 
-    // Super basic validation - increase errorCount variable if any fields are blank
-    var errorCount = 0;
-    $('#addToGenre input').each(function(index, val) {
-        if($(this).val() === '') { errorCount++; }
-    });
-    var idgenre;
-    var idbook;
+    // Empty content string
+    var tableContent = '';
     
-    // Check and make sure errorCount's still at zero
-    if(errorCount === 0) {
-        idgenre = $('#addToGenre fieldset input#inputGenreId').val();
-        idbook = $('#addToGenre fieldset input#inputBookId').val();
-        
-        $.ajax({
-            type: 'PUT',
-            url: '/users/addbooktogenre/'+$(this).attr(idbook)
-        }).done(function( response ) {
-
-            // Check for successful (blank) response
-            if (response.msg === '') {
-
-                // Clear the form inputs
-                $('#addToGenre fieldset input').val('');
-
-                // Update the table
-                populateTable3();
-
-            }
-            else {
-
-                // If something goes wrong, alert the error message that our service returned
-                alert('Error: ' + response.msg);
-
-            }
+    $.getJSON( '/store/typelist', function( data ) {
+        typeListData = data;
+        // For each item in our JSON, add a table row and cells to the content string
+        $.each(data, function(){
+            tableContent += '<tr>';
+            tableContent += '<td>' + this._id + '</td>';
+            tableContent += '<td>' + this.title + '</td>';
+            tableContent += '<td><a href="#" class="linkdeletetype" rel="' + this._id + '">delete</a></td>';
+            tableContent += '</tr>';
         });
-    }
-        
-    else {
-        // If errorCount is more than 0, error out
-        alert('Please fill in all fields');
-        return false;
-    }
+
+        // Inject the whole content string into our existing HTML table
+    $('#typeList table tbody').html(tableContent);
+    $('#btnAddType').on('click', addType);
+    $('#btnAddMagazineToType').on('click', addMagazineToType);
+    $('#typeList table tbody').on('click', 'td a.linkdeletetype', deleteType);
+    }); 
 };
+
 // Show Magazine Info
 function showMagazineInfo(event) {
 
@@ -180,6 +158,168 @@ function showMagazineInfo(event) {
 
 };
 
+function addMagazineToType(event) {
+    event.preventDefault();
+
+    // Super basic validation - increase errorCount variable if any fields are blank
+    var errorCount = 0;
+    $('#addMagazineToType input').each(function(index, val) {
+        if($(this).val() === '') { errorCount++; }
+    });
+
+    // Check and make sure errorCount's still at zero
+    if(errorCount === 0) {
+        var idtype = $('#addMagazineToType fieldset input#inputTypeTypeId').val();
+        var idbook = $('#addMagazineToType fieldset input#inputTypeBookId').val();
+        
+        var arrayPosition = typeListData.map(function(arrayItem) { return arrayItem.title; }).indexOf(idtype);
+
+    // Get our User Object
+        var thisTypeObject = typeListData[arrayPosition];
+        var newType;
+        
+        if(thisTypeObject.magazine == null ){
+            newType = {
+            'title': thisTypeObject.title,
+            'magazine': [idbook]
+            }
+        }
+        
+        // Use AJAX to post the object to our adduser service
+        $.ajax({
+            type: 'PUT',
+            data: newType,
+            url: '/store/typelist/' + thisTypeObject._id,
+            dataType: 'JSON'
+        }).done(function( response ) {
+
+            // Check for successful (blank) response
+            if (response.msg === '') {
+
+                // Clear the form inputs
+                $('#addMagazineToType fieldset input').val('');
+
+                // Update the table
+                populateTable4();
+
+            }
+            else {
+
+                // If something goes wrong, alert the error message that our service returned
+                alert('Error: ' + response.msg);
+
+            }
+        });
+    }
+    else {
+        // If errorCount is more than 0, error out
+        alert('Please fill in all fields');
+        return false;
+    }
+};
+//Add Genre
+function addGenre(event) {
+    event.preventDefault();
+
+    // Super basic validation - increase errorCount variable if any fields are blank
+    var errorCount = 0;
+    $('#addGenre input').each(function(index, val) {
+        if($(this).val() === '') { errorCount++; }
+    });
+
+    // Check and make sure errorCount's still at zero
+    if(errorCount === 0) {
+
+        // If it is, compile all user info into one object
+        var newGenre = {
+            'title': $('#addGenre fieldset input#inputGenreTitle').val(),
+            'books': []
+        }
+
+        // Use AJAX to post the object to our adduser service
+        $.ajax({
+            type: 'POST',
+            data: newGenre,
+            url: '/store/addgenre',
+            dataType: 'JSON'
+        }).done(function( response ) {
+
+            // Check for successful (blank) response
+            if (response.msg === '') {
+
+                // Clear the form inputs
+                $('#addGenre fieldset input').val('');
+
+                // Update the table
+                populateTable3();
+
+            }
+            else {
+
+                // If something goes wrong, alert the error message that our service returned
+                alert('Error: ' + response.msg);
+
+            }
+        });
+    }
+    else {
+        // If errorCount is more than 0, error out
+        alert('Please fill in all fields');
+        return false;
+    }
+};
+//Add Type
+function addType(event) {
+    event.preventDefault();
+
+    // Super basic validation - increase errorCount variable if any fields are blank
+    var errorCount = 0;
+    $('#addType input').each(function(index, val) {
+        if($(this).val() === '') { errorCount++; }
+    });
+
+    // Check and make sure errorCount's still at zero
+    if(errorCount === 0) {
+
+        
+        // If it is, compile all user info into one object
+        
+        var newType = {
+            'title': $('#addType fieldset input#inputTypeTitle').val(),
+        }
+
+        // Use AJAX to post the object to our adduser service
+        $.ajax({
+            type: 'POST',
+            data: newType,
+            url: '/store/addtype',
+            dataType: 'JSON'
+        }).done(function( response ) {
+
+            // Check for successful (blank) response
+            if (response.msg === '') {
+
+                // Clear the form inputs
+                $('#addType fieldset input').val('');
+
+                // Update the table
+                populateTable4();
+
+            }
+            else {
+
+                // If something goes wrong, alert the error message that our service returned
+                alert('Error: ' + response.msg);
+
+            }
+        });
+    }
+    else {
+        // If errorCount is more than 0, error out
+        alert('Please fill in all fields');
+        return false;
+    }
+};
 // Add Magazine
 function addMagazine(event) {
     event.preventDefault();
@@ -208,7 +348,7 @@ function addMagazine(event) {
         $.ajax({
             type: 'POST',
             data: newMgazine,
-            url: '/users/addmagazine',
+            url: '/store/addmagazine',
             dataType: 'JSON'
         }).done(function( response ) {
 
@@ -251,7 +391,7 @@ function deleteMagazine(event) {
         // If they did, do our delete
         $.ajax({
             type: 'DELETE',
-            url: '/users/deletemagazine/' + $(this).attr('rel')
+            url: '/store/magazinelist/' + $(this).attr('rel')
         }).done(function( response ) {
 
             // Check for a successful (blank) response
@@ -276,6 +416,83 @@ function deleteMagazine(event) {
 
 };
 
+// Delete Type
+function deleteType(event) {
+
+    event.preventDefault();
+
+    // Pop up a confirmation dialog
+    var confirmation = confirm('Are you sure you want to delete this magazine?');
+
+    // Check and make sure the user confirmed
+    if (confirmation === true) {
+
+        // If they did, do our delete
+        $.ajax({
+            type: 'DELETE',
+            url: '/store/typelist/' + $(this).attr('rel')
+        }).done(function( response ) {
+
+            // Check for a successful (blank) response
+            if (response.msg === '') {
+            }
+            else {
+                alert('Error: ' + response.msg);
+            }
+
+            // Update the table
+            populateTable4();
+
+        });
+
+    }
+    else {
+
+        // If they said no to the confirm, do nothing
+        return false;
+
+    }
+
+};
+
+// Delete Genre
+function deleteGenre(event) {
+
+    event.preventDefault();
+
+    // Pop up a confirmation dialog
+    var confirmation = confirm('Are you sure you want to delete this magazine?');
+
+    // Check and make sure the user confirmed
+    if (confirmation === true) {
+
+        // If they did, do our delete
+        $.ajax({
+            type: 'DELETE',
+            url: '/store/genrelist/' + $(this).attr('rel')
+        }).done(function( response ) {
+
+            // Check for a successful (blank) response
+            if (response.msg === '') {
+            }
+            else {
+                alert('Error: ' + response.msg);
+            }
+
+            // Update the table
+            populateTable3();
+
+        });
+
+    }
+    else {
+
+        // If they said no to the confirm, do nothing
+        return false;
+
+    }
+
+};
 // Show Book Info
 function showBookInfo(event) {
 
@@ -332,7 +549,7 @@ function addBook(event) {
         $.ajax({
             type: 'POST',
             data: newBook,
-            url: '/users/addbook',
+            url: '/store/addbook',
             dataType: 'JSON'
         }).done(function( response ) {
 
@@ -375,7 +592,7 @@ function deleteBook(event) {
         // If they did, do our delete
         $.ajax({
             type: 'DELETE',
-            url: '/users/deletebook/' + $(this).attr('rel')
+            url: '/store/booklist/' + $(this).attr('rel')
         }).done(function( response ) {
 
             // Check for a successful (blank) response

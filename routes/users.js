@@ -13,6 +13,18 @@ router.get('/booklist', function(req, res) {
 });
 
 /*
+ * GET one booklist.
+ */
+router.get('/booklist/:id', function(req, res) {
+    var db = req.db;
+    var collection = db.get('booklist');
+    var idbook = req.params.id;
+    collection.find({ '_id' : idbook },function(e,docs){
+        res.json(docs);
+    });
+});
+
+/*
  * POST to addbook.
  */
 router.post('/addbook', function(req, res) {
@@ -28,7 +40,7 @@ router.post('/addbook', function(req, res) {
 /*
  * DELETE to deletebook.
  */
-router.delete('/deletebook/:id', function(req, res) {
+router.delete('/booklist/:id', function(req, res) {
     var db = req.db;
     var collection = db.get('booklist');
     var bookToDelete = req.params.id;
@@ -48,16 +60,121 @@ router.get('/genrelist', function(req, res) {
     });
 });
 
-
 /*
- * Add book_id to genrelist.
+ * GET one genrelist.
  */
-router.put('/addbooktogenre/:id', function(req, res) {
+
+router.get('/genrelist/:id', function(req, res) {
     var db = req.db;
     var collection = db.get('genrelist');
     var idgenre = req.params.id;
-    var idbook = req.params.id;
-    collection.update({"_id": "57a3295182daa18e270759b9" }, {$addToSet: {"books" : idbook}});
+    collection.find({ '_id' : idgenre },function(e,docs){
+        res.json(docs);
+    });
+});
+
+/*
+ * POST to genrelist.
+ */
+router.post('/addgenre', function(req, res) {
+    var db = req.db;
+    var collection = db.get('genrelist');
+    collection.insert(req.body, function(err, result){
+        res.send(
+            (err === null) ? { msg: '' } : { msg: err }
+        );
+    });
+});
+
+/*
+ * DELETE to genrelist.
+ */
+router.delete('/genrelist/:id', function(req, res) {
+    var db = req.db;
+    var collection = db.get('genrelist');
+    var genreToDelete = req.params.id;
+    collection.remove({ '_id' : genreToDelete }, function(err) {
+        res.send((err === null) ? { msg: '' } : { msg:'error: ' + err });
+    });
+});
+/*
+ * PUT to genrelist.
+ */
+router.put('/genrelist/:id', function(req, res) {
+    var db = req.db;
+    var collection = db.get('genrelist');
+    var genre = req.body;
+    var idgenre = req.params.id;
+    collection.update({'_id': idgenre}, {$set: {"title" : genre.title, "books" : genre.books}}, function(err, result){
+        res.send(
+            (err === null) ? { msg: '' } : { msg: err }
+        );
+    });
+    
+});
+
+/*
+ * GET all typelist.
+ */
+
+router.get('/typelist', function(req, res) {
+    var db = req.db;
+    var collection = db.get('typelist');
+    collection.find({},{},function(e,docs){
+        res.json(docs);
+    });
+});
+
+/*
+ * GET one typelist.
+ */
+
+router.get('/typelist/:id', function(req, res) {
+    var db = req.db;
+    var collection = db.get('typelist');
+    var idtype = req.params.id;
+    collection.find({ '_id' : idtype },function(e,docs){
+        res.json(docs);
+    });
+});
+
+/*
+ * POST to typelist.
+ */
+router.post('/addtype', function(req, res) {
+    var db = req.db;
+    var collection = db.get('typelist');
+    collection.insert(req.body, function(err, result){
+        res.send(
+            (err === null) ? { msg: '' } : { msg: err }
+        );
+    });
+});
+
+/*
+ * DELETE to typelist.
+ */
+router.delete('/typelist/:id', function(req, res) {
+    var db = req.db;
+    var collection = db.get('typelist');
+    var typeToDelete = req.params.id;
+    collection.remove({ '_id' : typeToDelete }, function(err) {
+        res.send((err === null) ? { msg: '' } : { msg:'error: ' + err });
+    });
+});
+/*
+ * PUT to typelist.
+ */
+router.put('/typelist/:id', function(req, res) {
+    var db = req.db;
+    var collection = db.get('typelist');
+    var type = req.body;
+    var idtype = req.params.id;
+    collection.update({'_id': idtype}, {$set: {"title" : type.title, "magazine" : type.magazine}}, function(err, result){
+        res.send(
+            (err === null) ? { msg: '' } : { msg: err }
+        );
+    });
     
 });
 
@@ -71,6 +188,19 @@ router.get('/magazinelist', function(req, res) {
         res.json(docs);
     });
 });
+
+/*
+ * GET one magazine in magazinelist.
+ */
+router.get('/magazinelist/:id', function(req, res) {
+    var db = req.db;
+    var collection = db.get('magazinelist');
+    var idmagazine = req.params.id;
+    collection.find({ '_id' : idmagazine },function(e,docs){
+        res.json(docs);
+    });
+});
+
 
 /*
  * POST to addmagazine.
@@ -88,7 +218,7 @@ router.post('/addmagazine', function(req, res) {
 /*
  * DELETE to deletemagaine.
  */
-router.delete('/deletemagazine/:id', function(req, res) {
+router.delete('/magazinelist/:id', function(req, res) {
     var db = req.db;
     var collection = db.get('magazinelist');
     var magazineToDelete = req.params.id;
